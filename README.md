@@ -10,7 +10,7 @@ var dustjs = require('adaro');
 
 var app = express();
 
-app.engine('dust', dustjs.dust({ ... });
+app.engine('dust', dustjs.dust({ /* options */ });
 app.set('view engine', 'dust');
 
 // For rendering precompiled templates:
@@ -68,7 +68,7 @@ dust.render('index', { layout: false }, ...);
 
 
 
-#### `helpers` (optional) String Array, helper module names
+#### `helpers` (optional) String or Object Array, helper module names
 A helper module must either:
 - Conform to the API established by [dustjs-helpers] (https://github.com/linkedin/dustjs-helpers) provided by LinkedIn or 
 - Export a function which accepts a single argument (being dust itself). Such files should generally be designed for use on both client and server.
@@ -82,11 +82,23 @@ Client and Server Compatible
 }(typeof exports !== 'undefined' ? module.exports = require('dustjs-linkedin') : dust));
 ```
 
-Alternate API
+Alternate API, which supports options passed in from the configuration.
 ```javscript
-module.exports = function (dust) {
+module.exports = function (dust, options) {
     // Add helpers
 };
+```
+
+To include a helper module with arguments, in the place of a string module name, use an object like this:
+```javascript
+var options = {
+	helpers: [
+		'dustjs-helpers',
+		{ name: './lib/my-helper', arguments: { env: app.get('env'), greeting: 'Hi' } }
+	]
+};
+
+app.engine('dust', dustjs.dust(options));
 ```
 
 
